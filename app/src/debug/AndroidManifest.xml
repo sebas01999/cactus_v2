@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Solo aplica a builds debug (las que instalas para probar desde Android
+    Studio). Permite tráfico HTTP sin cifrar, necesario para hablar con el
+    servidor de desarrollo (php -S, sin certificado). El manifest principal
+    sigue con usesCleartextTraffic="false" para el build de producción/release.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application android:usesCleartextTraffic="true" tools:replace="android:usesCleartextTraffic" />
+</manifest>
