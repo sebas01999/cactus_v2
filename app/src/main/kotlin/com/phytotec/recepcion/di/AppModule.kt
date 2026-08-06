@@ -3,6 +3,7 @@ package com.phytotec.recepcion.di
 import android.content.Context
 import androidx.room.Room
 import com.phytotec.recepcion.data.local.AppDatabase
+import com.phytotec.recepcion.data.local.dao.AsignacionDao
 import com.phytotec.recepcion.data.local.dao.ConfirmacionDao
 import dagger.Module
 import dagger.Provides
@@ -27,4 +28,7 @@ object AppModule {
 
     @Provides
     fun provideConfirmacionDao(db: AppDatabase): ConfirmacionDao = db.confirmacionDao()
+
+    @Provides
+    fun provideAsignacionDao(db: AppDatabase): AsignacionDao = db.asignacionDao()
 }
