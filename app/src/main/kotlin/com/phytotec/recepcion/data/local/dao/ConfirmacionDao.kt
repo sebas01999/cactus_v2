@@ -15,7 +15,13 @@ interface ConfirmacionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(confirmacion: ConfirmacionLocalEntity)
 
-    @Query("SELECT * FROM confirmaciones_local WHERE syncStatus != 'SYNCED' ORDER BY scannedAtEpochMillis ASC")
+    /**
+     * Solo syncStatus = PENDING, NO 'FAILED'. Un FAILED es un error terminal
+     * (p. ej. 404: el id escaneado no existe en el servidor) — reintentarlo
+     * para siempre no lo va a arreglar, solo hace que "Sincronizar" parezca
+     * que no hace nada.
+     */
+    @Query("SELECT * FROM confirmaciones_local WHERE syncStatus = 'PENDING' ORDER BY scannedAtEpochMillis ASC")
     suspend fun findPending(): List<ConfirmacionLocalEntity>
 
     @Query("SELECT COUNT(*) FROM confirmaciones_local WHERE syncStatus != 'SYNCED'")

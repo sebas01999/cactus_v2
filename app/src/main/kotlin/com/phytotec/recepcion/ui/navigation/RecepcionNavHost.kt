@@ -54,7 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import com.phytotec.recepcion.data.remote.MobileNavItemDto
 import com.phytotec.recepcion.data.repository.AuthRepository
 import com.phytotec.recepcion.ui.ajustes.AjustesScreen
-import com.phytotec.recepcion.ui.dashboard.DashboardScreen
+import com.phytotec.recepcion.ui.bienvenida.BienvenidaScreen
 import com.phytotec.recepcion.ui.escanear.EscanearScreen
 import com.phytotec.recepcion.ui.historial.HistorialScreen
 import com.phytotec.recepcion.ui.login.LoginScreen
@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
 
 private object Routes {
     const val LOGIN = "login"
-    const val DASHBOARD = "dashboard"
+    const val BIENVENIDA = "bienvenida"
     const val ESCANEAR = "escanear"
     const val HISTORIAL = "historial"
     const val AJUSTES = "ajustes"
@@ -94,7 +94,7 @@ private fun MainShell(authRepository: AuthRepository) {
         else -> emptyList()
     }
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route ?: Routes.DASHBOARD
+    val currentRoute = backStackEntry?.destination?.route ?: Routes.BIENVENIDA
 
     fun open(route: String) {
         navController.navigate(route) {
@@ -173,14 +173,10 @@ private fun MainShell(authRepository: AuthRepository) {
         Box(modifier = Modifier.fillMaxSize()) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.DASHBOARD,
+                startDestination = Routes.BIENVENIDA,
             ) {
-                composable(Routes.DASHBOARD) {
-                    DashboardScreen(
-                        userName = userName,
-                        onEscanearClick = { open(Routes.ESCANEAR) },
-                        onHistorialClick = { open(Routes.HISTORIAL) },
-                    )
+                composable(Routes.BIENVENIDA) {
+                    BienvenidaScreen(userName = userName)
                 }
                 composable(Routes.ESCANEAR) {
                     EscanearScreen()
@@ -369,7 +365,7 @@ private fun fallbackItems(roles: List<String>): List<MobileNavItemDto> {
     val canUseApp = roles.contains("ROLE_MOBILE_APP") || roles.contains("ROLE_ADMIN")
     val items = mutableListOf<MobileNavItemDto>()
 
-    items.add(MobileNavItemDto("Dashboard", "home", Routes.DASHBOARD, emptyList()))
+    items.add(MobileNavItemDto("Inicio", "home", Routes.BIENVENIDA, emptyList()))
 
     if (canUseApp) {
         items.add(MobileNavItemDto("Escanear", "scan", Routes.ESCANEAR, emptyList()))

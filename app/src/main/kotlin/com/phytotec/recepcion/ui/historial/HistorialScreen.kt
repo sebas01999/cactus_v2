@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,7 +55,14 @@ fun HistorialScreen(
                         badge = { if (pendingCount > 0) Badge { Text("$pendingCount") } },
                         modifier = Modifier.padding(end = 16.dp),
                     ) {
-                        TextButton(onClick = viewModel::syncNow) { Text("Sincronizar") }
+                        if (state.sincronizando) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                                Text("Sincronizando...", modifier = Modifier.padding(start = 8.dp))
+                            }
+                        } else {
+                            TextButton(onClick = viewModel::syncNow) { Text("Sincronizar") }
+                        }
                     }
                 },
             )
