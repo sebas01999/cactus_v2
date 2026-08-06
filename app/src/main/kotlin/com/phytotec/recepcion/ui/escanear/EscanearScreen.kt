@@ -1,9 +1,5 @@
 package com.phytotec.recepcion.ui.escanear
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,84 +10,35 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
-
-private const val ZEBRA_SCAN_ACTION = "com.phytotec.recepcion.SCAN"
-private const val ZEBRA_SCAN_DATA_EXTRA = "com.symbol.datawedge.data_string"
+import com.phytotec.recepcion.ui.components.ZebraScanInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EscanearScreen(
     viewModel: EscanearViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
     val state = viewModel.uiState
-    var codigoEntrada by rememberSaveable { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
-
-    fun procesarCodigo(codigo: String) {
-        val limpio = codigo.trim()
-        if (limpio.isNotEmpty()) {
-            codigoEntrada = ""
-            viewModel.procesarCodigoLeido(limpio)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
-    LaunchedEffect(codigoEntrada) {
-        val limpio = codigoEntrada.trim()
-        if (limpio.isNotEmpty()) {
-            delay(180)
-            if (codigoEntrada.trim() == limpio) {
-                procesarCodigo(limpio)
-            }
-        }
-    }
-
-    DisposableEffect(context) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val codigo = intent?.getStringExtra(ZEBRA_SCAN_DATA_EXTRA)
-                if (!codigo.isNullOrBlank()) {
-                    procesarCodigo(codigo)
-                }
-            }
-        }
-
-        val filter = IntentFilter(ZEBRA_SCAN_ACTION)
-        ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
-
-        onDispose {
-            context.unregisterReceiver(receiver)
-        }
-    }
+    var ultimoCodigo by remember { mutableStateOf("") }
 
     Scaffold(topBar = { TopAppBar(title = { Text("Escanear recepción") }) }) { padding: PaddingValues ->
         Column(
@@ -117,10 +64,7 @@ fun EscanearScreen(
                     .fillMaxWidth()
                     .focusRequester(focusRequester)
                     .onPreviewKeyEvent { event ->
-                        if (
-                            event.nativeKeyEvent.action == android.view.KeyEvent.ACTION_UP &&
-                            event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER
-                        ) {
+                        if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
                             procesarCodigo(codigoEntrada)
                             true
                         } else {
@@ -130,11 +74,11 @@ fun EscanearScreen(
             )
 
             Button(
-                onClick = { procesarCodigo(codigoEntrada) },
-                enabled = codigoEntrada.isNotBlank() && !state.procesando,
+                onClick = { if (ultimoCodigo.isNotBlank()) viewModel.procesarCodigoLeido(ultimoCodigo) },
+                enabled = ultimoCodigo.isNotBlank() && !state.procesando,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Procesar código")
+                Text("Procesar de nuevo")
             }
 
             if (state.procesando) {
@@ -144,7 +88,7 @@ fun EscanearScreen(
             state.mensaje?.let { mensaje ->
                 Text(
                     mensaje,
-                color = if (state.esError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    color = if (state.esError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 )
             }
         }

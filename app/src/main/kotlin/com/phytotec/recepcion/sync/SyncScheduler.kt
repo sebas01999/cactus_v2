@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val PERIODIC_WORK_NAME = "confirmacion-sync-periodic"
-private const val MANUAL_WORK_NAME = "confirmacion-sync-manual"
+private const val PERIODIC_WORK_NAME = "sync-periodic"
+private const val MANUAL_WORK_NAME = "sync-manual"
 
 @Singleton
 class SyncScheduler @Inject constructor(
@@ -27,7 +27,7 @@ class SyncScheduler @Inject constructor(
 
     /** Runs roughly every 15 minutes whenever there's connectivity — WorkManager's floor for periodic work. */
     fun schedulePeriodicSync() {
-        val request = PeriodicWorkRequestBuilder<ConfirmacionSyncWorker>(15, TimeUnit.MINUTES)
+        val request = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
             .setConstraints(connectedConstraints)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
             .build()
@@ -38,7 +38,7 @@ class SyncScheduler @Inject constructor(
 
     /** Triggered right after scanning a barcode, and by the "Sincronizar ahora" button. */
     fun syncNow() {
-        val request = OneTimeWorkRequestBuilder<ConfirmacionSyncWorker>()
+        val request = OneTimeWorkRequestBuilder<SyncWorker>()
             .setConstraints(connectedConstraints)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
             .build()

@@ -33,7 +33,19 @@ data class RecepcionDetalleDto(
     val confirmedAt: String?,
     val confirmedByNombre: String?,
     val confirmedByNewScan: Boolean? = null,
+    val asignadoANombre: String? = null,
+    val asignadoEn: String? = null,
 )
+
+data class EmpleadoDetalleDto(
+    val id: Int,
+    val nombre: String,
+    val cargoNombre: String?,
+    /** "sin_iniciar" | "activa" | "pausada" | "finalizada" — ver App\Service\RendimientoService. */
+    val sesionEstado: String,
+)
+
+data class AsignarRequest(val empleadoId: Int)
 
 interface ApiService {
 
@@ -45,6 +57,12 @@ interface ApiService {
 
     @POST("recepciones/{id}/confirmar")
     suspend fun confirmarRecepcion(@Path("id") id: Int): RecepcionDetalleDto
+
+    @POST("recepciones/{id}/asignar")
+    suspend fun asignarRecepcion(@Path("id") id: Int, @Body request: AsignarRequest): RecepcionDetalleDto
+
+    @GET("empleados/{id}")
+    suspend fun getEmpleado(@Path("id") id: Int): EmpleadoDetalleDto
 
     @GET("navigation")
     suspend fun getNavigation(): MobileNavigationResponse

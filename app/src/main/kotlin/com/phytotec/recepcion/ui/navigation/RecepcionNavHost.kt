@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AssignmentInd
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.History
@@ -55,6 +56,7 @@ import com.phytotec.recepcion.data.remote.MobileNavItemDto
 import com.phytotec.recepcion.data.repository.AuthRepository
 import com.phytotec.recepcion.ui.ajustes.AjustesScreen
 import com.phytotec.recepcion.ui.bienvenida.BienvenidaScreen
+import com.phytotec.recepcion.ui.clasificacion.ClasificacionScreen
 import com.phytotec.recepcion.ui.escanear.EscanearScreen
 import com.phytotec.recepcion.ui.historial.HistorialScreen
 import com.phytotec.recepcion.ui.login.LoginScreen
@@ -65,6 +67,7 @@ private object Routes {
     const val BIENVENIDA = "bienvenida"
     const val ESCANEAR = "escanear"
     const val HISTORIAL = "historial"
+    const val CLASIFICACION = "clasificacion"
     const val AJUSTES = "ajustes"
 }
 
@@ -183,6 +186,9 @@ private fun MainShell(authRepository: AuthRepository) {
                 }
                 composable(Routes.HISTORIAL) {
                     HistorialScreen()
+                }
+                composable(Routes.CLASIFICACION) {
+                    ClasificacionScreen()
                 }
                 composable(Routes.AJUSTES) {
                     AjustesScreen()
@@ -355,6 +361,7 @@ private fun iconFor(code: String?): ImageVector = when (code?.lowercase()) {
     "home" -> Icons.Filled.Home
     "scan", "qrcode", "qrcode_scanner" -> Icons.Filled.QrCodeScanner
     "history", "list" -> Icons.Filled.History
+    "clipboard-check", "assignment" -> Icons.Filled.AssignmentInd
     "settings", "cog" -> Icons.Filled.Settings
     "folder" -> Icons.Filled.Folder
     "user", "person" -> Icons.Filled.Person
@@ -370,6 +377,7 @@ private fun fallbackItems(roles: List<String>): List<MobileNavItemDto> {
     if (canUseApp) {
         items.add(MobileNavItemDto("Escanear", "scan", Routes.ESCANEAR, emptyList()))
         items.add(MobileNavItemDto("Historial", "history", Routes.HISTORIAL, emptyList()))
+        items.add(MobileNavItemDto("Clasificación", "clipboard-check", Routes.CLASIFICACION, emptyList()))
     }
 
     if (roles.contains("ROLE_ADMIN")) {

@@ -4,7 +4,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.phytotec.recepcion.data.local.dao.AsignacionDao
 import com.phytotec.recepcion.data.local.dao.ConfirmacionDao
+import com.phytotec.recepcion.data.local.entities.AsignacionLocalEntity
 import com.phytotec.recepcion.data.local.entities.ConfirmacionLocalEntity
 import com.phytotec.recepcion.data.local.entities.SyncStatus
 
@@ -17,11 +19,12 @@ class Converters {
 }
 
 @Database(
-    entities = [ConfirmacionLocalEntity::class],
-    version = 2,
+    entities = [ConfirmacionLocalEntity::class, AsignacionLocalEntity::class],
+    version = 3,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun confirmacionDao(): ConfirmacionDao
+    abstract fun asignacionDao(): AsignacionDao
 }

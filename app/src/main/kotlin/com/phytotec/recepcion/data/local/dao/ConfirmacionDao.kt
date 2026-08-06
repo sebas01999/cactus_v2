@@ -24,7 +24,8 @@ interface ConfirmacionDao {
     @Query("SELECT * FROM confirmaciones_local WHERE syncStatus = 'PENDING' ORDER BY scannedAtEpochMillis ASC")
     suspend fun findPending(): List<ConfirmacionLocalEntity>
 
-    @Query("SELECT COUNT(*) FROM confirmaciones_local WHERE syncStatus != 'SYNCED'")
+    /** Mismo criterio que findPending(): solo cuenta lo que "Sincronizar" puede resolver. */
+    @Query("SELECT COUNT(*) FROM confirmaciones_local WHERE syncStatus = 'PENDING'")
     fun observePendingCount(): Flow<Int>
 
     @Query("SELECT * FROM confirmaciones_local ORDER BY scannedAtEpochMillis DESC")
