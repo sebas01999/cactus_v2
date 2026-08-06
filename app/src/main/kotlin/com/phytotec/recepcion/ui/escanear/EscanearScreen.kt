@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
@@ -118,7 +117,10 @@ fun EscanearScreen(
                     .fillMaxWidth()
                     .focusRequester(focusRequester)
                     .onPreviewKeyEvent { event ->
-                        if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
+                        if (
+                            event.nativeKeyEvent.action == android.view.KeyEvent.ACTION_UP &&
+                            event.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER
+                        ) {
                             procesarCodigo(codigoEntrada)
                             true
                         } else {
