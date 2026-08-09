@@ -21,7 +21,7 @@ android {
         // Base URL of the phytotec_v2 API this app talks to.
         // IP local de la PC donde corre "php -S 0.0.0.0:8000" para pruebas
         // desde el celular físico — cámbiala cuando pases a producción real.
-        buildConfigField "String", "API_BASE_URL", "\"http://192.168.1.12:8000/api/\""
+        buildConfigField "String", "API_BASE_URL", "\"http://192.168.1.10:8000/api/\""
     }
 
     buildTypes {
