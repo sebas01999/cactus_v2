@@ -20,14 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.phytotec.recepcion.ui.components.ZebraScanInput
@@ -52,25 +44,13 @@ fun EscanearScreen(
                 "Usa el escáner Zebra para leer el código de barras de la etiqueta. La app procesa la recepción al instante, sin cámara.",
             )
 
-            OutlinedTextField(
-                value = codigoEntrada,
-                onValueChange = { nuevoValor ->
-                    codigoEntrada = nuevoValor.replace("\n", "").replace("\r", "")
+            ZebraScanInput(
+                onCodigoLeido = { codigo ->
+                    ultimoCodigo = codigo
+                    viewModel.procesarCodigoLeido(codigo)
                 },
-                label = { Text("Código leído por Zebra") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onPreviewKeyEvent { event ->
-                        if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
-                            procesarCodigo(codigoEntrada)
-                            true
-                        } else {
-                            false
-                        }
-                    },
+                enabled = !state.procesando,
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Button(
